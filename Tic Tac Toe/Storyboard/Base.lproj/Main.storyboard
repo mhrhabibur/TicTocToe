@@ -184,6 +184,7 @@
                         <outlet property="button7" destination="Uhz-tI-mCZ" id="UNa-0h-QXN"/>
                         <outlet property="button8" destination="RUm-Ud-3qc" id="1LT-fP-FjP"/>
                         <outlet property="button9" destination="EVo-Yg-eEx" id="OL5-Oc-u75"/>
+                        <outlet property="displayLabel" destination="qS8-w9-dgH" id="EWE-lA-Rso"/>
                         <outlet property="turnLabel" destination="HyC-Uf-qhv" id="sfJ-6J-Hxi"/>
                     </connections>
                 </viewController>

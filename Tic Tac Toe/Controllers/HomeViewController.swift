@@ -15,6 +15,7 @@ enum Turn {
 class HomeViewController: UIViewController {
     
     @IBOutlet weak var turnLabel: UILabel!
+    @IBOutlet weak var displayLabel: UILabel!
     @IBOutlet weak var button1: UIButton!
     @IBOutlet weak var button2: UIButton!
     @IBOutlet weak var button3: UIButton!
@@ -33,6 +34,7 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationItem.title = "Tic Tac Toe"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "Change Turn",
@@ -46,8 +48,11 @@ class HomeViewController: UIViewController {
             target: self,
             action: #selector(resetGame)
         )
+        
         initBoard()
-        navigationItem.leftBarButtonItem?.isEnabled = true
+        navigationItem.leftBarButtonItem?.isHidden = false
+        turnLabel.isHidden = false
+        displayLabel.isHidden = false
     }
     
     // MARK: Board Init
@@ -63,7 +68,9 @@ class HomeViewController: UIViewController {
         self.currentTurn = .Cross
         self.turnLabel.text = self.CROSS
         board.forEach { $0.setTitle(nil, for: .normal) }
-        navigationItem.leftBarButtonItem?.isEnabled = true
+        navigationItem.leftBarButtonItem?.isHidden = false
+        turnLabel.isHidden = false
+        displayLabel.isHidden = false
     }
     
     // MARK: Reset Game
@@ -82,6 +89,8 @@ class HomeViewController: UIViewController {
         }))
         alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
+        turnLabel.isHidden = false
+        displayLabel.isHidden = false
     }
     
     // MARK: Check Board If it is Full or not
@@ -95,19 +104,53 @@ class HomeViewController: UIViewController {
         return board.allSatisfy{$0.title(for: .normal) == nil}
     }
     
+    // MARK: Check For Victory
+    
+    private func checkForVictory(_ symbol: String) -> Bool {
+        if checkSymbol(button1, symbol) && checkSymbol(button2, symbol) && checkSymbol(button3, symbol) {
+            return true
+        }
+        if checkSymbol(button4, symbol) && checkSymbol(button5, symbol) && checkSymbol(button6, symbol) {
+            return true
+        }
+        if checkSymbol(button7, symbol) && checkSymbol(button8, symbol) && checkSymbol(button9, symbol) {
+            return true
+        }
+        if checkSymbol(button1, symbol) && checkSymbol(button4, symbol) && checkSymbol(button7, symbol) {
+            return true
+        }
+        if checkSymbol(button2, symbol) && checkSymbol(button5, symbol) && checkSymbol(button8, symbol) {
+            return true
+        }
+        if checkSymbol(button3, symbol) && checkSymbol(button6, symbol) && checkSymbol(button9, symbol) {
+            return true
+        }
+        if checkSymbol(button1, symbol) && checkSymbol(button5, symbol) && checkSymbol(button9, symbol) {
+            return true
+        }
+        if checkSymbol(button3, symbol) && checkSymbol(button5, symbol) && checkSymbol(button7, symbol) {
+            return true
+        }
+        return false
+    }
+    
+    func checkSymbol(_ button: UIButton, _ symbol: String) -> Bool {
+        return button.title(for: .normal) == symbol
+    }
+    
     // MARK: Reset Alert
     
-    private func resultAlert() {
+    private func resultAlert(result: String) {
         let alert = UIAlertController(
             title: "Game Over",
-            message: "Draw!",
+            message: "\(result)",
             preferredStyle: .actionSheet
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         alert
             .addAction(
-                UIAlertAction(
-                    title: "Start New Game",
+                UIAlertAction( 
+                    title: "Play Again",
                     style: .default,
                     handler: { _ in
                         self.resetBoard()
@@ -121,10 +164,26 @@ class HomeViewController: UIViewController {
     
     @IBAction func buttonTapped(_ sender: UIButton) {
         addToBoard(sender)
-        if (isBoardFull()) {
-            resultAlert()
+        if isBoardFull() {
+            turnLabel.isHidden = true
+            displayLabel.isHidden = true
+            resultAlert(result: "Draw!")
         }
-        navigationItem.leftBarButtonItem?.isEnabled = false
+        if checkForVictory("X") {
+            turnLabel.isHidden = true
+            displayLabel.isHidden = true
+            resultAlert(result: "X wins!")
+        }
+        
+        if checkForVictory("O") {
+            turnLabel.isHidden = true
+            displayLabel.isHidden = true
+            resultAlert(result: "O wins!")
+        }
+        
+        
+
+        navigationItem.leftBarButtonItem?.isHidden = true
     }
     
     // MARK: Add To Board
@@ -147,8 +206,13 @@ class HomeViewController: UIViewController {
     
     @objc func changeTurn() {
         if isBoardEmpty() {
-            currentTurn = currentTurn == .Cross ? .Nought : .Cross
-            turnLabel.text = currentTurn == .Cross ? CROSS : NOUGHT
+            if currentTurn == .Cross {
+                currentTurn = .Nought
+                self.turnLabel.text = self.NOUGHT
+            } else if currentTurn == .Nought{
+                currentTurn = .Cross
+                self.turnLabel.text = self.CROSS
+            }
         }
     }
     
