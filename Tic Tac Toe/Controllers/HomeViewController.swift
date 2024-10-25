@@ -31,11 +31,13 @@ class HomeViewController: UIViewController {
     let NOUGHT = "O"
     let CROSS = "X"
     var board: [UIButton] = []
+    var crossWins: Int = 0
+    var noughtWins: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Tic Tac Toe"
+        navigationItem.title = "X = \(crossWins) | O = \(noughtWins)"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "Change Turn",
             style: .plain,
@@ -170,19 +172,19 @@ class HomeViewController: UIViewController {
             resultAlert(result: "Draw!")
         }
         if checkForVictory("X") {
+            crossWins += 1
             turnLabel.isHidden = true
             displayLabel.isHidden = true
             resultAlert(result: "X wins!")
         }
         
         if checkForVictory("O") {
+            noughtWins += 1
             turnLabel.isHidden = true
             displayLabel.isHidden = true
             resultAlert(result: "O wins!")
         }
-        
-        
-
+        navigationItem.title = "X = \(crossWins) | O = \(noughtWins)"
         navigationItem.leftBarButtonItem?.isHidden = true
     }
     
